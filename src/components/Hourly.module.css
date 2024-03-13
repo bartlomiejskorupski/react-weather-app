@@ -1,0 +1,9 @@
+#hourlySection ::-webkit-scrollbar {
+  height: 0.4rem;
+  background-color: transparent;
+}
+
+#hourlySection ::-webkit-scrollbar-thumb {
+  border-radius: 1rem;
+  background: rgba(220, 220, 220, 0.15);
+}

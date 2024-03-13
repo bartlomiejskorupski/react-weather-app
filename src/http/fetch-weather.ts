@@ -1,49 +1,64 @@
-import { fetchWeatherApi } from 'openmeteo';
-
-interface WeatherInfo {
-  current: number;
-  hourly: {
-    time: Date[];
-    temperature2m: number[];
+export interface WeatherData {
+  latitude: number;
+  longitude: number;
+  utc_offset_seconds: number;
+  timezone: string;
+  timezone_abbreviation: string;
+  elevation: number;
+  current_units: CurrentWeatherUnits;
+  current: CurrentWeatherData;
+  hourly_units: {
+    time: string;
+    temperature_2m: string;
   };
+  hourly: {
+    time: string[];
+    temperature_2m: number[];
+  };
+}
+
+export interface CurrentWeatherData {
+  time: string;
+  interval: number;
+  temperature_2m: number;
+  apparent_temperature: number;
+  is_day: number;
+  precipitation: number;
+  rain: number;
+  showers: number;
+  snowfall: number;
+}
+
+interface CurrentWeatherUnits {
+  time: string;
+  interval: string;
+  temperature_2m: string;
+  apparent_temperature: string;
+  is_day: string;
+  precipitation: string;
+  rain: string;
+  showers: string;
+  snowfall: string;
 }
 
 export default async function fetchWeather(
   latitude: number,
   longitude: number
-): Promise<WeatherInfo> {
-  const res = await fetchWeatherApi('https://api.open-meteo.com/v1/forecast', {
-    latitude,
-    longitude,
-    hourly: 'temperature_2m',
-    current: 'temperature_2m',
-    timezone: 'auto',
-  });
-  // Helper function to form time ranges
-  const range = (start: number, stop: number, step: number) =>
-    Array.from({ length: (stop - start) / step }, (_, i) => start + i * step);
+) {
+  const url = new URL('https://api.open-meteo.com/v1/forecast');
+  url.searchParams.append('latitude', JSON.stringify(latitude));
+  url.searchParams.append('longitude', JSON.stringify(longitude));
+  url.searchParams.append(
+    'current',
+    'temperature_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall'
+  );
+  url.searchParams.append('hourly', 'temperature_2m');
+  url.searchParams.append('timezone', 'auto');
 
-  // Process first location. Add a for-loop for multiple locations or weather models
-  const response = res[0];
+  const res = await fetch(url, {});
+  const data: WeatherData = await res.json();
 
-  // Attributes for timezone and location
-  const utcOffsetSeconds = response.utcOffsetSeconds();
+  console.log(data);
 
-  const hourly = response.hourly()!;
-  const current = response.current()!.variables(0)?.value();
-
-  // Note: The order of weather variables in the URL query and the indices below need to match!
-  const weatherData = {
-    current: current!,
-    hourly: {
-      time: range(
-        Number(hourly.time()),
-        Number(hourly.timeEnd()),
-        hourly.interval()
-      ).map((t) => new Date((t + utcOffsetSeconds) * 1000)),
-      temperature2m: Array.from(hourly.variables(0)!.valuesArray()!),
-    },
-  };
-
-  return weatherData;
+  return data;
 }

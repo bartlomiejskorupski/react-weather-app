@@ -1,10 +1,19 @@
-import { PropsWithChildren, createContext, useEffect, useState } from 'react';
-import fetchWeather from '../http/fetch-weather';
+import {
+  PropsWithChildren,
+  createContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import fetchWeather, {
+  CurrentWeatherData,
+  WeatherData,
+} from '../http/fetch-weather';
 
 interface WeatherContextValue {
   location: string | null;
-  temperature: number | null;
-  hourly: HourlyType[];
+  current: CurrentWeatherData | null;
+  hourly: HourlyType[] | null;
 }
 
 interface HourlyType {
@@ -14,38 +23,39 @@ interface HourlyType {
 
 const WeatherContext = createContext<WeatherContextValue>({
   location: null,
-  temperature: null,
+  current: null,
   hourly: [],
 });
 
 export function WeatherContextProvider({ children }: PropsWithChildren) {
-  const [temperature, setTemperature] = useState<number | null>(null);
-  const [hourly, setHourly] = useState<HourlyType[]>([]);
+  const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
 
   useEffect(() => {
     let ignore = false;
-    fetchWeather(54.3523, 18.6491).then((info) => {
+    fetchWeather(54.3523, 18.6491).then((data) => {
       if (ignore) {
         return;
       }
-      setTemperature(info.hourly.temperature2m[0]);
 
-      const temps = info.hourly.temperature2m;
-      const newHourly = info.hourly.time.map((e, i) => ({
-        time: e,
-        temperature: temps[i],
-      }));
-      setHourly(newHourly);
+      setWeatherData(data);
     });
     return () => {
       ignore = true;
     };
   }, []);
 
+  const hourly = useMemo(() => {
+    const temps = weatherData?.hourly.temperature_2m;
+    return weatherData?.hourly.time.map((e, i) => ({
+      time: new Date(e),
+      temperature: temps?.[i],
+    }));
+  }, [weatherData]);
+
   const contextValue: WeatherContextValue = {
     location: 'Gdańsk',
-    temperature,
-    hourly,
+    current: weatherData?.current ?? null,
+    hourly: hourly ?? null,
   };
 
   return (
