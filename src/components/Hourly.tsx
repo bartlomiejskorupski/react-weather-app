@@ -24,10 +24,9 @@ export default function Hourly() {
   const { hourly: hourlyState, current } = useContext(WeatherContext);
 
   const hourly = useMemo(() => {
-    console.log(hourlyState);
     const nowId = hourlyState?.findIndex((h) => {
       const currTime = current?.time ?? new Date();
-      return h.time?.getHours() === new Date(currTime).getHours() + 12;
+      return h.time?.getHours() === new Date(currTime).getHours();
     });
 
     if (nowId === undefined || nowId === -1) {
@@ -46,6 +45,9 @@ export default function Hourly() {
       id={styles.hourlySection}
       className="bg-sky-400 bg-opacity-15 px-3 py-2 rounded-2xl md:max-w-[44rem] mx-8 md:m-auto"
     >
+      <p className="text-stone-100 text-opacity-50 uppercase text-sm tracking-wide leading-none mb-1">
+        Hourly forecast
+      </p>
       <div className="flex gap-4 overflow-x-auto">
         {hourly?.map((h) => (
           <HourlyItem
