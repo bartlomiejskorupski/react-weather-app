@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import WeatherContext from '../context/weather-context';
 
 import styles from './Hourly.module.css';
@@ -21,9 +21,25 @@ function HourlyItem({ time, type, temperature }: HourlyItemProps) {
 }
 
 export default function Hourly() {
-  const { hourly: hourlyState } = useContext(WeatherContext);
+  const { hourly: hourlyState, current } = useContext(WeatherContext);
 
-  const hourly = hourlyState?.slice(0, 10);
+  const hourly = useMemo(() => {
+    console.log(hourlyState);
+    const nowId = hourlyState?.findIndex((h) => {
+      const currTime = current?.time ?? new Date();
+      return h.time?.getHours() === new Date(currTime).getHours() + 12;
+    });
+
+    if (nowId === undefined || nowId === -1) {
+      return;
+    }
+
+    return hourlyState?.slice(nowId, nowId + 24).map((h, i) => ({
+      id: h.time?.toLocaleString(),
+      time: i === 0 ? 'Now' : toShortTime(h.time!),
+      temperature: h.temperature,
+    }));
+  }, [hourlyState, current]);
 
   return (
     <section
@@ -33,8 +49,8 @@ export default function Hourly() {
       <div className="flex gap-4 overflow-x-auto">
         {hourly?.map((h) => (
           <HourlyItem
-            key={h.time?.toString()}
-            time={toShortTime(h.time!)}
+            key={h.id}
+            time={h.time}
             type="..."
             temperature={h.temperature?.toFixed(0)}
           />
