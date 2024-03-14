@@ -14,6 +14,7 @@ interface WeatherContextValue {
   location: string | null;
   current: CurrentWeatherData | null;
   hourly: HourlyType[] | null;
+  loading: boolean;
 }
 
 interface HourlyType {
@@ -25,22 +26,28 @@ const WeatherContext = createContext<WeatherContextValue>({
   location: null,
   current: null,
   hourly: [],
+  loading: true,
 });
 
 export function WeatherContextProvider({ children }: PropsWithChildren) {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let ignore = false;
+    setLoading(true);
+
     fetchWeather(54.3523, 18.6491).then((data) => {
       if (ignore) {
         return;
       }
 
       setWeatherData(data);
+      setLoading(false);
     });
     return () => {
       ignore = true;
+      setLoading(false);
     };
   }, []);
 
@@ -56,6 +63,7 @@ export function WeatherContextProvider({ children }: PropsWithChildren) {
     location: 'Gdańsk',
     current: weatherData?.current ?? null,
     hourly: hourly ?? null,
+    loading,
   };
 
   return (

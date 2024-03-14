@@ -22,7 +22,7 @@ function HourlyItem({ time, type, temperature }: HourlyItemProps) {
 }
 
 export default function Hourly() {
-  const { hourly: hourlyState, current } = useContext(WeatherContext);
+  const { hourly: hourlyState, current, loading } = useContext(WeatherContext);
 
   const hourly = useMemo(() => {
     const nowId = hourlyState?.findIndex((h) => {
@@ -46,17 +46,17 @@ export default function Hourly() {
       id={styles.hourlySection}
       className="bg-sky-400 bg-opacity-15 px-3 py-2 rounded-2xl md:max-w-[44rem] mx-8 md:m-auto mb-2"
     >
-      {!hourly && (
+      {loading && (
         <>
           <Skeleton className="w-32 mb-1 bg-opacity-30" />
           <div className="flex gap-4">
-            {[...Array(6)].map((_, i) => (
+            {[...Array(8)].map((_, i) => (
               <Skeleton key={i} className="h-[4.9rem] bg-opacity-30" />
             ))}
           </div>
         </>
       )}
-      {hourly && (
+      {!loading && (
         <>
           <h2 className="text-stone-100 text-opacity-50 uppercase text-sm tracking-wide leading-none mb-1">
             Hourly forecast
