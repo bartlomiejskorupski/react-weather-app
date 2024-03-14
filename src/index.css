@@ -44,7 +44,8 @@ h1 {
 }
 
 input,
-textarea {
+textarea,
+select {
   font: inherit;
   color: inherit;
 }
