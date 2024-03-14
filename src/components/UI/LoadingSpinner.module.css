@@ -1,0 +1,36 @@
+.dotSpin {
+  animation: spin 1.4s ease-in-out infinite;
+}
+
+.dotSpin:nth-of-type(1) {
+  animation-delay: -300ms;
+  rotate: 40deg;
+}
+
+.dotSpin:nth-of-type(2) {
+  animation-delay: -150ms;
+  rotate: 20deg;
+}
+
+.dotSpin:nth-of-type(3) {
+  animation-delay: 0ms;
+}
+
+.dotSpin:nth-of-type(4) {
+  animation-delay: 150ms;
+  rotate: -20deg;
+}
+
+.dotSpin:nth-of-type(5) {
+  animation-delay: 300ms;
+  rotate: -40deg;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
