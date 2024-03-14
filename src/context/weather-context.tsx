@@ -63,7 +63,7 @@ export function WeatherContextProvider({ children }: PropsWithChildren) {
     location: 'Gdańsk',
     current: weatherData?.current ?? null,
     hourly: hourly ?? null,
-    loading,
+    loading: true,
   };
 
   return (

@@ -12,7 +12,7 @@ function SpinnerDot() {
 
 export default function LoadingSpinner({ className }: LoadingSpinnerProps) {
   return (
-    <div className={`${className} relative inline-block size-8`}>
+    <div className={`${className ?? ''} relative inline-block`}>
       {[...Array(5)].map((_, i) => (
         <div key={i} className={`absolute size-full top-0 ${styles.dotSpin}`}>
           <SpinnerDot />
