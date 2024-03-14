@@ -1,32 +1,27 @@
-import { ChangeEvent } from 'react';
-
-type AvailableLocation = 'gdansk' | 'warsaw' | 'berlin' | 'london' | 'prague';
-
-type LocationType = {
-  value: AvailableLocation;
-  name: string;
-};
+import { ChangeEvent, useContext } from 'react';
+import WeatherContext from '../context/weather-context';
+import locations from '../data/locations';
 
 export default function LocationSelect() {
-  const locations: LocationType[] = [
-    { value: 'gdansk', name: 'Gdańsk' },
-    { value: 'warsaw', name: 'Warsaw' },
-    { value: 'berlin', name: 'Berlin' },
-    { value: 'london', name: 'London' },
-    { value: 'prague', name: 'Prague' },
-  ];
+  const { changeLocation } = useContext(WeatherContext);
 
   function handleLocationChange(e: ChangeEvent<HTMLSelectElement>) {
-    console.log(e.target.value);
+    const chosenLocation = locations[+e.target.value];
+
+    changeLocation(
+      chosenLocation.latitude,
+      chosenLocation.longitude,
+      chosenLocation.name
+    );
   }
 
   return (
     <select
-      className="outline-none font text-black rounded-sm"
+      className="block ml-2 p-1 outline-none font text-black rounded-md font-semibold"
       onChange={handleLocationChange}
     >
-      {locations.map((loc) => (
-        <option key={loc.value} value={loc.value}>
+      {locations.map((loc, i) => (
+        <option key={loc.value} value={i}>
           {loc.name}
         </option>
       ))}
