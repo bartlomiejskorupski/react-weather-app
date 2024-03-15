@@ -7,14 +7,8 @@ export interface WeatherData {
   elevation: number;
   current_units: CurrentWeatherUnits;
   current: CurrentWeatherData;
-  hourly_units: {
-    time: string;
-    temperature_2m: string;
-  };
-  hourly: {
-    time: string[];
-    temperature_2m: number[];
-  };
+  hourly_units: HourlyWeatherUnits;
+  hourly: HourlyWeatherData;
 }
 
 export interface CurrentWeatherData {
@@ -23,22 +17,30 @@ export interface CurrentWeatherData {
   temperature_2m: number;
   apparent_temperature: number;
   is_day: number;
-  precipitation: number;
-  rain: number;
-  showers: number;
-  snowfall: number;
+  weather_code: number;
 }
 
-interface CurrentWeatherUnits {
+export interface CurrentWeatherUnits {
   time: string;
   interval: string;
   temperature_2m: string;
   apparent_temperature: string;
   is_day: string;
-  precipitation: string;
-  rain: string;
-  showers: string;
-  snowfall: string;
+  weather_code?: string;
+}
+
+export interface HourlyWeatherData {
+  time: string[];
+  temperature_2m: number[];
+  apparent_temperature: number[];
+  weather_code: number[];
+}
+
+export interface HourlyWeatherUnits {
+  time: string;
+  temperature_2m: string;
+  apparent_temperature: string;
+  weather_code: string;
 }
 
 export default async function fetchWeather(
@@ -50,9 +52,12 @@ export default async function fetchWeather(
   url.searchParams.append('longitude', JSON.stringify(longitude));
   url.searchParams.append(
     'current',
-    'temperature_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall'
+    'temperature_2m,apparent_temperature,is_day,weather_code'
   );
-  url.searchParams.append('hourly', 'temperature_2m');
+  url.searchParams.append(
+    'hourly',
+    'temperature_2m,apparent_temperature,weather_code'
+  );
   url.searchParams.append('timezone', 'auto');
 
   const res = await fetch(url, {});

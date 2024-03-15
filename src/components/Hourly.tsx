@@ -5,17 +5,33 @@ import styles from './Hourly.module.css';
 import { toShortTime } from '../utils/date-utils';
 import Skeleton from './UI/Skeleton';
 
+import sunSvg from '../assets/sun.svg';
+import partialCloudySvg from '../assets/partial.svg';
+import overcastSvg from '../assets/overcast.svg';
+import rainSvg from '../assets/rain.svg';
+
 type HourlyItemProps = {
   time?: string;
-  type?: string;
+  type?: number;
   temperature?: string;
 };
 
 function HourlyItem({ time, type, temperature }: HourlyItemProps) {
+  let svg = overcastSvg;
+  if (type === 0) {
+    svg = sunSvg;
+  } else if (type === 1 || type === 2) {
+    svg = partialCloudySvg;
+  } else if (type! >= 51) {
+    svg = rainSvg;
+  }
+
   return (
     <div className="text-center font-semibold">
       <p>{time}</p>
-      <p>{type}</p>
+      <p>
+        <img src={svg} className="size-6 mx-auto my-1" />
+      </p>
       <p>{temperature}&deg;</p>
     </div>
   );
@@ -38,6 +54,8 @@ export default function Hourly() {
       id: h.time?.toLocaleString(),
       time: i === 0 ? 'Now' : toShortTime(h.time!),
       temperature: h.temperature,
+      apparent: h.apparent,
+      weatherCode: h.weather_code,
     }));
   }, [hourlyState, current]);
 
@@ -66,7 +84,7 @@ export default function Hourly() {
               <HourlyItem
                 key={h.id}
                 time={h.time}
-                type="..."
+                type={h.weatherCode}
                 temperature={h.temperature?.toFixed(0)}
               />
             ))}

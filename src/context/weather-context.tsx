@@ -8,12 +8,14 @@ import {
 } from 'react';
 import fetchWeather, {
   CurrentWeatherData,
+  CurrentWeatherUnits,
   WeatherData,
 } from '../http/fetch-weather';
 
 interface WeatherContextValue {
   location: string | null;
   current: CurrentWeatherData | null;
+  currentUnits: CurrentWeatherUnits | null;
   hourly: HourlyType[] | null;
   loading: boolean;
   changeLocation: (lat: number, lng: number, name: string) => void;
@@ -22,11 +24,14 @@ interface WeatherContextValue {
 interface HourlyType {
   time?: Date;
   temperature?: number;
+  apparent?: number;
+  weather_code?: number;
 }
 
 const WeatherContext = createContext<WeatherContextValue>({
   location: null,
   current: null,
+  currentUnits: null,
   hourly: [],
   loading: true,
   changeLocation: () => {},
@@ -61,10 +66,12 @@ export function WeatherContextProvider({ children }: PropsWithChildren) {
   }, [location]);
 
   const hourly = useMemo(() => {
-    const temps = weatherData?.hourly.temperature_2m;
+    const hourlyData = weatherData?.hourly;
     return weatherData?.hourly.time.map((e, i) => ({
       time: new Date(e),
-      temperature: temps?.[i],
+      temperature: hourlyData?.temperature_2m?.[i],
+      apparent: hourlyData?.apparent_temperature?.[i],
+      weather_code: hourlyData?.weather_code?.[i],
     }));
   }, [weatherData]);
 
@@ -78,6 +85,7 @@ export function WeatherContextProvider({ children }: PropsWithChildren) {
   const contextValue: WeatherContextValue = {
     location: location.name,
     current: weatherData?.current ?? null,
+    currentUnits: weatherData?.current_units ?? null,
     hourly: hourly ?? null,
     loading,
     changeLocation: handleLocationChange,
