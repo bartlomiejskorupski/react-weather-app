@@ -1,4 +1,10 @@
-type AvailableLocation = 'gdansk' | 'warsaw' | 'berlin' | 'london' | 'prague';
+type AvailableLocation =
+  | 'gdansk'
+  | 'warsaw'
+  | 'berlin'
+  | 'london'
+  | 'prague'
+  | 'sydney';
 
 type LocationType = {
   value: AvailableLocation;
@@ -28,6 +34,12 @@ const locations: LocationType[] = [
   },
   { value: 'london', name: 'London', latitude: 51.509865, longitude: 0.118092 },
   { value: 'prague', name: 'Prague', latitude: 50.073658, longitude: 14.41854 },
+  {
+    value: 'sydney',
+    name: 'Sydney',
+    latitude: -33.865143,
+    longitude: 151.2099,
+  },
 ];
 
 export default locations;

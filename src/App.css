@@ -1,3 +1,11 @@
 #root {
   min-height: 100svh;
 }
+
+.background-day {
+  background: linear-gradient(#24176b, #566fdc);
+}
+
+.background-night {
+  background: linear-gradient(#160e41, #263990);
+}
